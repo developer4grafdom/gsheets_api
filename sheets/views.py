@@ -55,6 +55,7 @@ def read_sheet(request, spreadsheet_id: str):
 @csrf_exempt
 @require_PUT
 def update_sheet(request, spreadsheet_id: str):
+   
     try:
         body = json.loads(request.body.decode("utf-8") or "{}")
         sheet_name = require_sheet(request.GET)
@@ -64,7 +65,7 @@ def update_sheet(request, spreadsheet_id: str):
 
         where = body.get("where")
         multiple_param = str(request.GET.get("multiple", "false")).strip().lower()
-        update_all = multiple_param == "true"
+        update_all = multiple_param == 'true'
 
         result = upsert_rows(
             spreadsheet_id=spreadsheet_id,
@@ -76,11 +77,11 @@ def update_sheet(request, spreadsheet_id: str):
 
         resp = JsonResponse(
             {
+                "sheet": sheet_name,
                 "updated": result["updated"],
                 "appended": result["appended"],
             }
         )
-
         return resp
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)

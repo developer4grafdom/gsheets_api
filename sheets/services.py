@@ -253,7 +253,7 @@ def upsert_rows(
         
         if len(target_indices) == 1:
             idx = target_indices[0]
-            sheet_row_num = idx + 2 
+            sheet_row_num = idx + 2
             end_col = col_idx_to_a1(len(headers) - 1)
             range_spec = f"{sheet_name}!A{sheet_row_num}:{end_col}{sheet_row_num}"
             
@@ -276,6 +276,7 @@ def upsert_rows(
                 ).execute()
                 updated = 1
             else:
+                print("upsert_rows: skipped update - no changes needed")
                 updated = 0
         else:
             data_rows = []
@@ -321,12 +322,17 @@ def upsert_rows(
         for k, v in data.items():
             if k in headers:
                 new_row[headers.index(k)] = v
+        
+        last_row = len(values)
+        end_col = col_idx_to_a1(len(headers) - 1)
+        range_spec = f"{sheet_name}!A{last_row}:{end_col}{last_row}"
+        
         req = (
             svc.spreadsheets()
             .values()
             .append(
                 spreadsheetId=spreadsheet_id,
-                range=sheet_name,
+                range=range_spec,
                 valueInputOption="RAW",
                 insertDataOption="INSERT_ROWS",
                 body={"values": [new_row]},
