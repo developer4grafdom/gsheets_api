@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "sheets",  # our app
+    "sheets",
 ]
 
 MIDDLEWARE = [
@@ -47,3 +47,6 @@ STATIC_URL = "static/"
 
 # --- Google Sheets settings (via env) ---
 GOOGLE_SERVICE_ACCOUNT_INFO_B64 = os.getenv("GOOGLE_SERVICE_ACCOUNT_INFO_B64")
+
+DUMMY_SHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+DUMMY_RANGE = "A1:A1"

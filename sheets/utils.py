@@ -11,9 +11,28 @@ def col_idx_to_a1(n: int) -> str:
     return s
 
 def normalize_rows(headers: List[str], raw_rows: List[List[str]]) -> List[dict]:
-    """Pad rows to headers length and return dicts keyed by header."""
+    if not raw_rows:
+        return []
+
+    hdr_len = len(headers)
+    hdr_tuple = tuple(headers)
+    pad_cache = None
+
     out = []
+    append = out.append
     for r in raw_rows:
-        padded = r + [""] * (len(headers) - len(r))
-        out.append(dict(zip(headers, padded)))
+        r_len = len(r)
+        if r_len < hdr_len:
+            need = hdr_len - r_len
+            if pad_cache is None or len(pad_cache) < need:
+                pad_cache = [""] * need
+            padded = list(r) + pad_cache[:need]
+        else:
+            if r_len > hdr_len:
+                padded = r[:hdr_len]
+            else:
+                padded = r
+
+        append(dict(zip(hdr_tuple, padded)))
+
     return out
