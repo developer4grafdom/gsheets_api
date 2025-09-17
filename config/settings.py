@@ -50,3 +50,10 @@ GOOGLE_SERVICE_ACCOUNT_INFO_B64 = os.getenv("GOOGLE_SERVICE_ACCOUNT_INFO_B64")
 
 DUMMY_SHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
 DUMMY_RANGE = "A1:A1"
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
