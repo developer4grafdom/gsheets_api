@@ -203,6 +203,48 @@ def apply_pagination(
         "hasNextPage": has_next
     }
 
+def apply_unique(rows: List[dict], unique_by: Optional[Any]) -> List[dict]:
+    """
+    Return unique rows based on one or more keys.
+    - unique_by can be a string key or a list of string keys
+    - keeps the first occurrence (stable)
+    If unique_by is falsy/None, rows are returned unchanged.
+    """
+    if not unique_by:
+        return rows
+    if isinstance(unique_by, str):
+        keys = [unique_by]
+    elif isinstance(unique_by, (list, tuple)):
+        keys = [k for k in unique_by if isinstance(k, str)]
+    else:
+        return rows
+
+    if not keys:
+        return rows
+
+    seen = set()
+    unique_rows: List[dict] = []
+    for r in rows:
+        compound_key = tuple(str(r.get(k, "")) for k in keys)
+        if compound_key in seen:
+            continue
+        seen.add(compound_key)
+        unique_rows.append(r)
+    return unique_rows
+
+def apply_options(rows: List[dict], options: Optional[dict]) -> List[dict]:
+    """
+    Apply read options in a single place. This provides a central hook to
+    extend behavior in the future (e.g., sorting, selecting columns, etc.).
+    Currently supports:
+      - options.uniqueBy: string or list of strings
+    """
+    if not options:
+        return rows
+    unique_by = options.get("uniqueBy") if isinstance(options, dict) else None
+    rows = apply_unique(rows, unique_by)
+    return rows
+
 def filter_rows(
     headers: List[str], rows: List[dict], filters: Dict[str, str]
 ) -> List[Tuple[int, dict]]:

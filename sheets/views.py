@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from .validators import require_sheet, require_data, require_PUT
 from .services import (
     read_values, upsert_rows, apply_filters, 
-    apply_pagination
+    apply_pagination, apply_options
 )
 from .utils import normalize_rows
 
@@ -32,8 +32,9 @@ def read_sheet(request, spreadsheet_id: str):
         rows = normalize_rows(headers, values[1:])
 
         filtered_rows = apply_filters(rows, body.get("where"))
+        page_input_rows = apply_options(filtered_rows, body.get("options"))
         page_rows, pagination_info = apply_pagination(
-            filtered_rows,
+            page_input_rows,
             page=body.get("page"),
             limit=body.get("limit")
         )
